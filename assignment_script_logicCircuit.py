@@ -1,4 +1,4 @@
-import requests, browsercookie, re, os, easygui, UnRAR2
+import requests, browsercookie, re, os, easygui
 from pyunpack import Archive
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
@@ -10,10 +10,10 @@ assignment_id = easygui.enterbox(
 	strip = True, # will remove whitespace around whatever the user types in
 	default = "") 
 
-url = 'http://ilearn.cyber.org.il/teacher_dropbox_assignment/grading/' + assignment_id + '/'
+url = 'https://ilearn.cyber.org.il/teacher_dropbox_assignment/grading/' + assignment_id + '/'
 cj = browsercookie.firefox()
 page = requests.get(url, cookies=cj, verify=False)
-get_student = lambda html: re.findall('/teacher_dropbox_assignment/grade(.*?)\"><span>', html, flags=re.DOTALL)
+get_student = lambda html: re.findall('/teacher_dropbox_assignment/grade(.*?)\"><span', html, flags=re.DOTALL)
 acurrances_list = get_student(page.content)
 #create folder for assignments
 folder_path = '../students_homework_' + assignment_id
@@ -39,7 +39,7 @@ for accurance in acurrances_list:
 	if len(assignment) == 0:
 		pass
 	else:
-		url = 'http://ilearn.cyber.org.il/files' + assignment[0]
+		url = 'http://ilearn.cyber.org.il/files/' + assignment[0]
 		cur_name = "%s" %  names_dic.get(assignment[0][:7])
 		
 		page = requests.get(url, cookies=cj, verify=False)
@@ -54,11 +54,8 @@ for accurance in acurrances_list:
 				os.makedirs(folder_path + '/' + cur_name + '_extracted')
 			#unpack zip files
 			try:
-				if(assignment[0][-4:] == '.rar'):
-					rarc = UnRAR2.RarFile(zip_file_path)
-					rarc.extract('*', folder_path + '/' + cur_name + '_extracted', True, True)
-				else:
-					Archive(zip_file_path).extractall(folder_path + '/' + cur_name + '_extracted')
+				
+				Archive(zip_file_path).extractall(folder_path + '/' + cur_name + '_extracted')
 				report.append(cur_name + ": Is ready\n")
 				print cur_name + ": Is ready\n"
 			except Exception as inst:
@@ -68,11 +65,8 @@ for accurance in acurrances_list:
 		else:
 			if(assignment[0][-4:] == 'docx'):
 				notzip_file = folder_path + '/' + cur_name + '.docx'
-			if(assignment[0][-14:] == 'CircuitProject'):
-				notzip_file = folder_path + '/' + cur_name + '.CircuitProject'
 			else:
 				notzip_file = folder_path + '/' + cur_name + assignment[0][-4:]
-				
 			notzip = open(notzip_file, 'wb')
 			notzip.write(page.content)
 			notzip.close()
