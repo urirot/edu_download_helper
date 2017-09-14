@@ -41,7 +41,7 @@ for accurance in acurrances_list:
 	else:
 		url = 'http://ilearn.cyber.org.il/files/' + assignment[0]
 		cur_name = "%s" %  names_dic.get(assignment[0][:7])
-		
+
 		page = requests.get(url, cookies=cj, verify=False)
 		#download zip/rar files
 		if (assignment[0][-4:] == '.zip' or assignment[0][-4:] == '.rar'):
@@ -65,6 +65,10 @@ for accurance in acurrances_list:
 		else:
 			if(assignment[0][-4:] == 'docx'):
 				notzip_file = folder_path + '/' + cur_name + '.docx'
+
+			if(assignment[0][-14:] == 'CircuitProject'):
+				notzip_file = folder_path + '/' + cur_name + '.CircuitProject'
+
 			else:
 				notzip_file = folder_path + '/' + cur_name + assignment[0][-4:]
 			notzip = open(notzip_file, 'wb')
